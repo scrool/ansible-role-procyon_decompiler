@@ -1,0 +1,19 @@
+---
+# defaults file for procyon_decompiler
+# Path to a jar file of procyon decompiler on a control host or URL to download
+# from.
+procyon_decompiler_jar_src: ""
+
+# By default installs the program. Set to "absent" to uninstall.
+procyon_decompiler_state: present
+
+# Base name of installation directory.
+procyon_decompiler_top_dest_name: procyon-decompiler
+
+# Parent directory in which program will be installed. See also
+# `procyon_decompiler_top_dest_name`.
+procyon_decompiler_install_parent_dir: /opt
+
+# If set to "yes", contents of installation directory is not compared against
+# contents of `procyon_decompiler_jar_src` when uninstall, upgrade or downgrade.
+procyon_decompiler_force_remove: no

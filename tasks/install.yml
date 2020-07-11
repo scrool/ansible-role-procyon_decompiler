@@ -1,0 +1,54 @@
+---
+# install tasks file for procyon_decompiler
+- name: Fail if jar src is not set
+  fail:
+    msg: To install procyon_decompiler_jar_src must be set
+  when: procyon_decompiler_jar_src | length == 0
+
+- name: Create Procyon install directory
+  become: yes
+  file:
+    path: "{{ procyon_decompiler_install_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Download jar if src is URL
+  become: yes
+  block:
+    - name: Download jar
+      get_url:
+        url: "{{ procyon_decompiler_jar_src }}"
+        dest: "{{ procyon_decompiler_install_dir }}/"
+        mode: '0444'
+      register: procyon_jar_installed
+    - name: Symlink latest Procyon as latest
+      become: yes
+      file:
+        src: "{{ procyon_jar_installed.dest | basename }}"
+        dest: "{{ procyon_decompiler_symlink_name }}"
+        state: link
+  when: "'://' in procyon_decompiler_jar_src"
+
+- name: Copy jar if src is not URL
+  become: yes
+  block:
+    - name: Copy jar if src is not URL
+      copy:
+        src: "{{ procyon_decompiler_jar_src }}"
+        dest: "{{ procyon_decompiler_install_dir }}/"
+        mode: '0444'
+      register: procyon_jar_installed
+    - name: Symlink latest Procyon as latest
+      become: yes
+      file:
+        src: "{{ procyon_jar_installed.dest | basename }}"
+        dest: "{{ procyon_decompiler_symlink_name }}"
+        state: link
+  when: "'://' not in procyon_decompiler_jar_src"
+
+- name: Create executable for Procyon
+  become: yes
+  template:
+    src: procyon-decompiler.j2
+    dest: "{{ procyon_decompiler_executable }}"
+    mode: '0555'

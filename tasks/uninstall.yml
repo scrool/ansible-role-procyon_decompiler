@@ -1,0 +1,18 @@
+---
+# uninstall tasks file for procyon_decompiler
+- name: Fail if top level is not set
+  fail:
+    msg: If force remove is set, procyon_decompiler_top_dest_name must be defined as well
+  when: procyon_decompiler_top_dest_name | length == 0
+
+- name: Remove executable
+  become: yes
+  file:
+    name: "{{ procyon_decompiler_executable }}"
+    state: absent
+
+- name: Remove installation directory
+  become: yes
+  file:
+    name: "{{ procyon_decompiler_install_dir }}"
+    state: absent

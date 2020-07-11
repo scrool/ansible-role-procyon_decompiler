@@ -1,0 +1,27 @@
+---
+# tasks file for procyon_decompiler
+- name: Fail if jar src is not set
+  fail:
+    msg: procyon_decompiler_jar_src must be set
+  when: procyon_decompiler_jar_src | length == 0
+
+- name: Fail if desired state is invalid
+  fail:
+    msg: State variable must be either "present" or "absent"
+  when: procyon_decompiler_state not in ["present", "absent"]
+
+- name: Uninstall tasks of Procyon java decompiler
+  include_tasks: uninstall.yml
+  when:
+    - procyon_decompiler_state == "absent"
+    - procyon_decompiler_force_remove | bool
+
+- name: Install tasks of Procyon java decompiler
+  include_tasks: install.yml
+  when: procyon_decompiler_state == "present"
+
+- name: Safe uninstall tasks of Procyon java decompiler
+  include_tasks: safe_uninstall.yml
+  when:
+    - procyon_decompiler_state == "absent"
+    - not (procyon_decompiler_force_remove | bool)

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -eu
+
+topdir={{ procyon_decompiler_install_dir }}
+
+jarfile=procyon-decompiler.jar
+if [ ! -r "$topdir/$jarfile" ]
+then
+    echo $(basename "$0")": can't find $jarfile under '$topdir'."
+    exit 1
+fi
+
+JAVA_OPTS="${JAVA_OPTS:--Xmx512M -Dfile.encoding=utf-8}"
+
+exec java $JAVA_OPTS -jar "$topdir/$jarfile" "$@"

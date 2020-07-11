@@ -1,0 +1,45 @@
+---
+# safe uninstall tasks file for procyon_decompiler
+- name: Fail if jar src is not set
+  fail:
+    msg: To safe uninstall procyon_decompiler_jar_src must be set
+  when: procyon_decompiler_jar_src | length == 0
+
+- name: Remove executable
+  become: yes
+  file:
+    name: "{{ procyon_decompiler_executable }}"
+    state: absent
+
+- name: Remove symlink to jar
+  become: yes
+  file:
+    name: "{{ procyon_decompiler_symlink_name }}"
+    state: absent
+
+- name: Test if copy or download would happen
+  become: yes
+  block:
+    - name: Download jar if src is URL
+      get_url:
+        url: "{{ procyon_decompiler_jar_src }}"
+        dest: "{{ procyon_decompiler_install_dir }}/"
+        mode: '0440'
+      check_mode: yes
+      register: procyon_jar_install
+      when: "'://' in procyon_decompiler_jar_src"
+    - name: Copy jar if src is not URL
+      copy:
+        src: "{{ procyon_decompiler_jar_src }}"
+        dest: "{{ procyon_decompiler_install_dir }}/"
+        mode: '0440'
+      check_mode: yes
+      register: procyon_jar_install
+      when: "'://' not in procyon_decompiler_jar_src"
+
+- name: Fail if the installed content doesn't match
+  fail:
+    msg: Installed content doesn't match
+  when:
+    - not ansible_check_mode
+    - procyon_jar_install.changed

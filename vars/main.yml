@@ -1,0 +1,5 @@
+---
+# vars file for procyon_decompiler
+procyon_decompiler_executable: /usr/local/bin/procyon-decompiler
+procyon_decompiler_install_dir: "{{ procyon_decompiler_install_parent_dir}}/{{ procyon_decompiler_top_dest_name }}"
+procyon_decompiler_symlink_name: "{{ procyon_decompiler_install_dir }}/procyon-decompiler.jar"
